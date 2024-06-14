@@ -1,0 +1,38 @@
+pwd: 5Olidfinance //twelve data
+
+
+Certainly, let's consider the changes in balance independently for each position as the market moves.
+
+1. **Long Position:**
+   - Initial balance: $1000
+   - Open Long trade: Buy 0.02 lots at $10 per lot
+   - Used margin: $0.02 * $10 = $0.2
+   - Remaining balance: $1000 - $0.2 = $999.8
+
+If the market moves in favor of the Long position:
+- Let's say the market price increases to $11.
+- Profit from the Long position: ($11 - $10) * 0.02 = $0.02
+- New balance: $999.8 + $0.02 = $999.82
+
+If the market moves against the Long position:
+- Let's say the market price decreases to $9.
+- Loss from the Long position: ($9 - $10) * 0.02 = -$0.02
+- New balance: $999.8 - $0.02 = $999.78
+
+2. **Short Position:**
+   - Initial balance: $999.8 (updated from the Long position)
+   - Open Short trade: Sell 0.02 lots at $10 per lot
+   - Used margin: $0.02 * $10 = $0.2
+   - Remaining balance: $999.8 + $0.2 = $1000
+
+If the market moves in favor of the Short position:
+- Let's say the market price decreases to $9.
+- Profit from the Short position: ($10 - $9) * 0.02 = $0.02
+- New balance: $1000 + $0.02 = $1000.02
+
+If the market moves against the Short position:
+- Let's say the market price increases to $11.
+- Loss from the Short position: ($10 - $11) * 0.02 = -$0.02
+- New balance: $1000 - $0.02 = $999.98
+
+These calculations show how the balance changes independently for each position as the market moves in either direction.

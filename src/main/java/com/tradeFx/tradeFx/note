@@ -1,0 +1,166 @@
+Do similar for this, handle all scenery
+
+public class Transaction {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String amount;
+    private String status;
+    private TransactionType transactionType;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    private String transactionId;
+    private String transactionRef;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    private void onInsert(){
+        createdAt = LocalDateTime.now();
+        updatedAt = createdAt;
+        if (status == null || status.isEmpty()){
+            status = "processing";
+        }
+    }
+
+    @PreUpdate
+    private void onInsertUpdate(){
+        updatedAt = LocalDateTime.now();
+    }
+}
+
+
+@RestController
+@RequestMapping("/transactions")
+public class TransactionController {
+
+    @Autowired
+    private TransactionService transactionService;
+
+    @GetMapping
+    public List<Transaction> getAllTransactions() {
+        return transactionService.getAllTransactions();
+    }
+
+    @PostMapping
+    public Transaction createTransaction(@RequestBody Transaction transaction) {
+        return transactionService.createTransaction(transaction);
+    }
+
+    @GetMapping("/{id}")
+    public Transaction getTransactionById(@PathVariable Long id) {
+        return transactionService.getTransactionById(id);
+    }
+
+    @PutMapping("/{id}")
+    public Transaction updateTransaction(@PathVariable Long id, @RequestBody Transaction transaction) {
+        return transactionService.updateTransaction(id, transaction);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteTransaction(@PathVariable Long id) {
+        transactionService.deleteTransaction(id);
+    }
+}
+
+@Service
+public class TransactionService {
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    public List<Transaction> getAllTransactions() {
+        return transactionRepository.findAll();
+    }
+
+    public Transaction createTransaction(Transaction transaction) {
+        User user = userService.user(transaction.getUser().getId());
+
+        Money transactionAmount = Money.of(Double.parseDouble(transaction.getAmount()), String.valueOf(Locale.US));
+        Money userBalance = Money.of(Double.parseDouble(user.getBalance()), String.valueOf(Locale.US));
+
+        if (transaction.getTransactionType() == TransactionType.DEPOSIT){
+            user.setBalance(
+                    userBalance.add(transactionAmount).toString()
+            );
+        } else if (transaction.getTransactionType() == TransactionType.WITHDRAW){
+            if (userBalance.isLessThan(transactionAmount)){
+                throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Insufficient balance");
+            }
+            user.setBalance(
+                    userBalance.subtract(transactionAmount).toString()
+            );
+        }
+
+        userService.updateUser(user.getId(), user);
+
+        return transactionRepository.save(transaction);
+    }
+
+    public Transaction getTransactionById(Long id) {
+        return transactionRepository.findById(id)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Transaction not found with id " + id));
+    }
+
+    public Transaction updateTransaction(Long id, TransactionStatus status) {
+        Transaction existingTrans= transactionRepository.findById(id)
+                .orElseThrow(()-> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Transaction not found with id " + id));
+
+        existingTrans.setStatus(status);
+        return transactionRepository.save(existingTrans);
+    }
+
+    public void deleteTransaction(Long id) {
+        if (!transactionRepository.existsById(id)) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Transaction not found with id " + id);
+        }
+        transactionRepository.deleteById(id);
+    }
+}
+
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String name;
+    private String email;
+    private String ethAddress;
+    private boolean emailVerified;
+    private boolean accountVerified;
+    private String secret;
+    private String password;
+    private String balance;
+    private String status;
+    private String profileImg;
+    private String userRole;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", targetEntity = Trade.class, orphanRemoval = true)
+    List<Trade> trades;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", targetEntity = Transaction.class, orphanRemoval = true)
+    List<Transaction> transactions;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    private void onInsert(){
+        createdAt = LocalDateTime.now();
+        updatedAt = createdAt;
+    }
+
+    @PreUpdate
+    private void onInsertUpdate(){
+        updatedAt = LocalDateTime.now();
+        if (trades == null){
+            trades = new ArrayList<>();
+        }
+        if (transactions == null){
+            transactions = new ArrayList<>();
+        }
+    }
+}
