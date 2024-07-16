@@ -1,5 +1,6 @@
 package com.tradeFx.tradeFx.notification;
 
+import com.github.javafaker.Faker;
 import com.tradeFx.tradeFx.HistoricalData.HistoricalData;
 import com.tradeFx.tradeFx.config.WebSocketController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,13 @@ public class NotificationTask {
         webSocketController.sendFx(data);
     }
 
-    @Scheduled(fixedRate = 3000)  // Schedule to run every 1000 milliseconds (1 second)
+//    @Scheduled(fixedRate = 3000)  // Schedule to run every 1000 milliseconds (1 second)
     public void setNotificationService() {
-        Notification notification = new Notification(1L, 1L, "Lorem ipsum lorem ipsum", "Cagy", NotificationStatus.UNREAD, LocalDateTime.now());
+        Faker faker = new Faker();
+
+        Notification notification = new Notification(1L, 1L, faker.lorem().sentence(), faker.lebowski().quote(), Priority.NORMAL, NotificationStatus.UNREAD, LocalDateTime.now());
         notificationService.sendNotificationToUser(notification.getUserId(), notification);
+        notificationService.broadcast(notification);
     }
 }
 

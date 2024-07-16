@@ -1,0 +1,10 @@
+@Asdf1234T
+support@19fxfussion.com
+19fxfussion_db
+
+19fxfussion@ssh-19fxfussion.alwaysdata.net:
+mvn clean compile package -Dmaven.test.skip=true
+
+mv tradeFx-0.0.1-SNAPSHOT.jar tradeFx.jar
+
+scp tradeFx.jar 19fxfussion@ssh-19fxfussion.alwaysdata.net:

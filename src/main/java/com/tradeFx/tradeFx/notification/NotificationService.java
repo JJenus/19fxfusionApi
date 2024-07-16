@@ -39,4 +39,8 @@ public class NotificationService {
     public void sendNotificationToUser(Long userId, Notification notification) {
         messagingTemplate.convertAndSend("/queue/notifications/"+userId, notification);
     }
+
+    public void broadcast(Notification notification) {
+        messagingTemplate.convertAndSend("/topic/notifications", notification);
+    }
 }

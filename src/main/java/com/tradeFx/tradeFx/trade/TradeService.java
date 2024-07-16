@@ -30,7 +30,7 @@ public class TradeService {
         eTrade.setTakeProfitPrice(trade.getTakeProfitPrice());
 
         // Save updated trade to repository
-        return tradeRepository.save(trade);
+        return tradeRepository.save(eTrade);
     }
 
     // Update stop loss level for a trade

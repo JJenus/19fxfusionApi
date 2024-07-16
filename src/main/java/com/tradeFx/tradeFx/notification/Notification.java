@@ -21,6 +21,7 @@ public class Notification {
     private Long userId;
     private String message;
     private String title;
+    private Priority priority;
     private NotificationStatus status;
     private LocalDateTime createdAt;
 }

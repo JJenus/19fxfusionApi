@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tradeFx.tradeFx.trade.Trade;
 import com.tradeFx.tradeFx.transaction.Transaction;
+import com.tradeFx.tradeFx.userSettings.UserSettings;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,6 +43,10 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", targetEntity = Transaction.class, orphanRemoval = true)
     List<Transaction> transactions;
 
+    // One-to-one mapping with UserSettings
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private UserSettings userSettings;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -49,6 +54,9 @@ public class User {
     private void onInsert(){
         createdAt = LocalDateTime.now();
         updatedAt = createdAt;
+        if (userRole == null){
+            userRole = "user";
+        }
     }
 
     @PreUpdate

@@ -44,10 +44,14 @@ public class UserService {
         return uuid.toString().replaceAll("-", "");
     }
 
-    public void updateUser(long id, User user){
+    public User updateUser(long id, User user){
         userRepository.findById(id).orElseThrow(
-                ()-> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User not foun")
+                ()-> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User not found")
         );
-        userRepository.save(user);
+        return userRepository.save(user);
+    }
+
+    public Optional<User> getUserById(Long userId) {
+        return userRepository.findById(userId);
     }
 }
