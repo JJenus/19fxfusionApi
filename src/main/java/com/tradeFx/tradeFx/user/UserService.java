@@ -1,5 +1,6 @@
 package com.tradeFx.tradeFx.user;
 
+import org.javamoney.moneta.Money;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -53,5 +54,27 @@ public class UserService {
 
     public Optional<User> getUserById(Long userId) {
         return userRepository.findById(userId);
+    }
+
+    public void updateBalance(Long userId, BalanceDTO balance) {
+        User user = userRepository.findById(userId).orElseThrow(
+                ()-> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User not found")
+        );
+
+        Money transactionAmount = Money.of(Double.parseDouble(balance.getAmount()), "USD");
+        Money userBalance = Money.of(Double.parseDouble(user.getBalance()), "USD");
+
+        if (balance.getAction() == BalanceDTO.Action.ADD){
+            user.setBalance(
+                    transactionAmount.add(userBalance).toString()
+            );
+        }
+        else if(balance.getAction() == BalanceDTO.Action.SUB){
+            user.setBalance(
+                    userBalance.subtract(transactionAmount).toString()
+            );
+        }
+
+        userRepository.save(user);
     }
 }

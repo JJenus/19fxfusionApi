@@ -53,7 +53,14 @@ public class UserController {
         }
         Optional<UserSettings> userSettings = userSettingsService.getUserSettingsByUser(user.get());
         return userSettings.map(ResponseEntity::ok)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Settings not found"));
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Settings not found" +
+                        ""));
+    }
+
+    @PutMapping("/{userId}/balance")
+    public ResponseEntity<Void> updateUserBalance(@PathVariable("userId") Long userId, @RequestBody BalanceDTO balance) {
+        userService.updateBalance(userId, balance);
+        return ResponseEntity.status(200).build();
     }
 
 }

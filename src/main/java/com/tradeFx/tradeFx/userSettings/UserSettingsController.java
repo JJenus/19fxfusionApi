@@ -8,6 +8,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("user-settings")
+@CrossOrigin
 public class UserSettingsController {
 
     @Autowired

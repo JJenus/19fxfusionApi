@@ -1,6 +1,7 @@
 package com.tradeFx.tradeFx.config;
 
 import com.tradeFx.tradeFx.HistoricalData.HistoricalData;
+import com.tradeFx.tradeFx.marketData.MarketData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -21,6 +22,10 @@ public class WebSocketController {
     }
 
     public void sendFx(HistoricalData message) {
+        messagingTemplate.convertAndSend("/topic/fx", message);
+    }
+
+    public void sendMarketFx(MarketData message) {
         messagingTemplate.convertAndSend("/topic/fx", message);
     }
 }

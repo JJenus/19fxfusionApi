@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/historical-data")
+@CrossOrigin
 public class HistoricalDataController {
     @Autowired
     private HistoricalDataService historicalDataService;

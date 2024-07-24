@@ -26,6 +26,8 @@ public class Trade {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private String currencyPair;
+    private Long currencyId;
     private double lots;
     private TradeType tradeType;
     private double entryPrice;

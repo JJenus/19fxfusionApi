@@ -1,5 +1,7 @@
 package com.tradeFx.tradeFx.trade;
 
+import com.tradeFx.tradeFx.notification.Notification;
+import com.tradeFx.tradeFx.notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.web.client.HttpClientErrorException;
 public class TradeService {
     @Autowired
     private TradeRepository tradeRepository;
+    @Autowired
+    NotificationService notificationService;
 
     // Place a new trade
     public Trade placeTrade(Trade trade) {
@@ -17,6 +21,12 @@ public class TradeService {
         // Set trade attributes based on tradeRequest
         // Save trade to repository
         trade.setStatus(Status.OPEN);
+        Notification notification = Notification.builder()
+                .title(String.format("%s Order ", trade.getCurrencyPair()))
+                .message(String.format("Entry price: %.5f, Lots: %.2f", trade.getEntryPrice(), trade.getLots()))
+                .userId(trade.getUser().getId()).build();
+
+        notificationService.createNotification(notification);
         return tradeRepository.save(trade);
     }
 
